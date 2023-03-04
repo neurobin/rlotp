@@ -150,6 +150,13 @@ For new applications:
 * `WebAuthn <https://www.w3.org/TR/webauthn/>`_
 * `PyWARP <https://github.com/pyauth/pywarp>`_
 
+Versioning
+~~~~~~~~~~
+This package follows the `Semantic Versioning 2.0.0 <http://semver.org/>`_ standard. To control changes, it is
+recommended that application developers pin the package version and manage it using `pip-tools
+<https://github.com/jazzband/pip-tools>`_ or similar. For library developers, pinning the major version is
+recommended.
+
 .. image:: https://github.com/pyauth/pyotp/workflows/Python%20package/badge.svg
         :target: https://github.com/pyauth/pyotp/actions
 .. image:: https://img.shields.io/codecov/c/github/pyauth/pyotp/master.svg
