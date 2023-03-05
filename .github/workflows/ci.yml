@@ -20,5 +20,11 @@ jobs:
     - name: Test
       run: make test
     - uses: codecov/codecov-action@v3
-    - uses: isort/isort-action@v1.0.0
-    - uses: psf/black@stable
+  black:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: psf/black@stable
+  isort:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: isort/isort-action@v1.1.0
