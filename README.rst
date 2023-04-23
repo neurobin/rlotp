@@ -18,19 +18,21 @@ minimum, application implementers should follow this checklist:
 
 - Ensure transport confidentiality by using HTTPS
 - Ensure HOTP/TOTP secret confidentiality by storing secrets in a controlled access database
-- Deny replay attacks by rejecting one-time passwords that have been used by the client (this requires storing the most 
-  recently authenticated timestamp, OTP, or hash of the OTP in your database, and rejecting the OTP when a match is seen)
+- Deny replay attacks by rejecting one-time passwords that have been used by the client (this requires storing the most
+  recently authenticated timestamp, OTP, or hash of the OTP in your database, and rejecting the OTP when a match is
+  seen)
 - Throttle (rate limit) brute-force attacks against your application's login functionality (see RFC 4226, section 7.3)
 - When implementing a "greenfield" application, consider supporting
   `FIDO U2F <https://en.wikipedia.org/wiki/Universal_2nd_Factor>`_/`WebAuthn <https://www.w3.org/TR/webauthn/>`_ in
   addition to HOTP/TOTP. U2F uses asymmetric cryptography to avoid using a shared secret design, which strengthens your
   MFA solution against server-side attacks. Hardware U2F also sequesters the client secret in a dedicated single-purpose
   device, which strengthens your clients against client-side attacks. And by automating scoping of credentials to
-  relying party IDs (application origin/domain names), U2F adds protection against phishing attacks. One implementation of
-  FIDO U2F/WebAuthn is PyOTP's sister project, `PyWARP <https://github.com/pyauth/pywarp>`_.
+  relying party IDs (application origin/domain names), U2F adds protection against phishing attacks. One implementation
+  of FIDO U2F/WebAuthn is PyOTP's sister project, `PyWARP <https://github.com/pyauth/pywarp>`_.
 
 We also recommend that implementers read the
-`OWASP Authentication Cheat Sheet <https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Authentication_Cheat_Sheet.md>`_ and
+`OWASP Authentication Cheat Sheet
+<https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Authentication_Cheat_Sheet.md>`_ and
 `NIST SP 800-63-3: Digital Authentication Guideline <https://pages.nist.gov/800-63-3/>`_ for a high level overview of
 authentication best practices.
 
@@ -39,8 +41,10 @@ Quick overview of using One Time Passwords on your phone
 
 * OTPs involve a shared secret, stored both on the phone and the server
 * OTPs can be generated on a phone without internet connectivity
-* OTPs should always be used as a second factor of authentication (if your phone is lost, you account is still secured with a password)
-* Google Authenticator and other OTP client apps allow you to store multiple OTP secrets and provision those using a QR Code
+* OTPs should always be used as a second factor of authentication (if your phone is lost, you account is still secured
+  with a password)
+* Google Authenticator and other OTP client apps allow you to store multiple OTP secrets and provision those using a QR
+  Code
 
 Installation
 ------------
@@ -83,7 +87,8 @@ Counter-based OTPs
 
 Generating a Secret Key
 ~~~~~~~~~~~~~~~~~~~~~~~
-A helper function is provided to generate a 32-character base32 secret, compatible with Google Authenticator and other OTP apps::
+A helper function is provided to generate a 32-character base32 secret, compatible with Google Authenticator and other
+OTP apps::
 
     pyotp.random_base32()
 
@@ -94,8 +99,8 @@ Some applications want the secret key to be formatted as a hex-encoded string::
 Google Authenticator Compatible
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-PyOTP works with the Google Authenticator iPhone and Android app, as well as other OTP apps like Authy. PyOTP includes the
-ability to generate provisioning URIs for use with the QR Code scanner built into these MFA client apps::
+PyOTP works with the Google Authenticator iPhone and Android app, as well as other OTP apps like Authy. PyOTP includes
+the ability to generate provisioning URIs for use with the QR Code scanner built into these MFA client apps::
 
     pyotp.totp.TOTP('JBSWY3DPEHPK3PXP').provisioning_uri(name='alice@google.com', issuer_name='Secure App')
 
@@ -105,8 +110,8 @@ ability to generate provisioning URIs for use with the QR Code scanner built int
 
     >>> 'otpauth://hotp/Secure%20App:alice%40google.com?secret=JBSWY3DPEHPK3PXP&issuer=Secure%20App&counter=0'
 
-This URL can then be rendered as a QR Code (for example, using https://github.com/soldair/node-qrcode) which can then be scanned
-and added to the users list of OTP credentials.
+This URL can then be rendered as a QR Code (for example, using https://github.com/soldair/node-qrcode) which can then be
+scanned and added to the users list of OTP credentials.
 
 Parsing these URLs is also supported::
 
@@ -130,6 +135,13 @@ Now run the following and compare the output::
     import pyotp
     totp = pyotp.TOTP("JBSWY3DPEHPK3PXP")
     print("Current OTP:", totp.now())
+
+Third-party contributions
+~~~~~~~~~~~~~~~~~~~~~~~~~
+The following third-party contributions are not described by a standard, not officially supported, and provided for
+reference only:
+
+* ``pyotp.contrib.Steam()``: An implementation of Steam TOTP. Uses the same API as `pyotp.TOTP()`.
 
 Links
 ~~~~~
