@@ -1,34 +1,31 @@
-SHELL=/bin/bash -e
+SHELL=/bin/bash
 
 test_deps:
-	pip install coverage flake8 mypy sphinx wheel
+	python -m pip install .[test]
 
-lint: test_deps
-	flake8 src
+lint:
+	ruff src
+	mypy --install-types --non-interactive --check-untyped-defs src
 
-typecheck: test_deps
-	mypy --strict --no-warn-unused-ignores src
-
-test: lint typecheck
+test:
 	coverage run --branch --include 'src/*' -m unittest discover -s test -v
 
-init_docs: test_deps
+init_docs:
 	cd docs; sphinx-quickstart
 
-docs: test_deps
+docs:
+	python -m pip install furo sphinx-copybutton
 	sphinx-build docs docs/html
 
-build:
-	pip install build
+install: clean
+	python -m pip install build
 	python -m build
-
-install: clean build
-	pip install --upgrade dist/*.whl
+	python -m pip install --upgrade $$(echo dist/*.whl)[test]
 
 clean:
 	-rm -rf build dist
 	-rm -rf *.egg-info
 
-.PHONY: lint test test_deps docs build install clean
+.PHONY: test_deps lint test docs install clean
 
 include common.mk
