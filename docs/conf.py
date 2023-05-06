@@ -17,24 +17,19 @@ pygments_style = "sphinx"
 intersphinx_mapping = {
     "https://docs.python.org/3": None,
 }
+templates_path = [""]
 
 if "readthedocs.org" in os.getcwd().split("/"):
     with open("index.rst", "w") as fh:
         fh.write("Documentation for this project has moved to https://pyauth.github.io/pyotp")
 else:
-    import guzzle_sphinx_theme
-
-    html_theme_path = guzzle_sphinx_theme.html_theme_path()
-    html_theme = "guzzle_sphinx_theme"
-    html_theme_options = {
-        "project_nav_name": project,
-        "projectlink": "https://github.com/pyauth/pyotp",
-    }
+    html_theme = "furo"
     html_sidebars = {
         "**": [
-            "logo-text.html",
-            # "globaltoc.html",
-            "localtoc.html",
-            "searchbox.html",
+            "sidebar/brand.html",
+            "sidebar/search.html",
+            "sidebar/scroll-start.html",
+            "toc.html",
+            "sidebar/scroll-end.html",
         ]
     }
