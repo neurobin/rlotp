@@ -10,7 +10,7 @@ version = ""
 release = ""
 language = "en"
 master_doc = "index"
-extensions = ["sphinx.ext.autodoc", "sphinx.ext.viewcode", "sphinx.ext.intersphinx"]
+extensions = ["sphinx.ext.autodoc", "sphinx.ext.viewcode", "sphinx.ext.intersphinx", "sphinxext.opengraph"]
 source_suffix = [".rst", ".md"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 pygments_style = "sphinx"
@@ -18,6 +18,7 @@ intersphinx_mapping = {
     "https://docs.python.org/3": None,
 }
 templates_path = [""]
+ogp_site_url = "https://pyauth.github.io/pyotp/"
 
 if "readthedocs.org" in os.getcwd().split("/"):
     with open("index.rst", "w") as fh:
