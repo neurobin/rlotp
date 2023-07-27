@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name="pyotp",
-    version="2.8.0",
+    version="2.9.0",
     url="https://github.com/pyotp/pyotp",
     project_urls={
         "Documentation": "https://pyauth.github.io/pyotp",

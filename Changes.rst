@@ -1,3 +1,10 @@
+Changes for v2.9.0 (2023-07-27)
+===============================
+
+-  Add ``parse_uri()`` support for Steam TOTP (#153)
+
+-  Test and documentation improvements
+
 Changes for v2.8.0 (2022-12-13)
 ===============================
 
