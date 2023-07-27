@@ -24,11 +24,11 @@ minimum, application implementers should follow this checklist:
 - Throttle (rate limit) brute-force attacks against your application's login functionality (see RFC 4226, section 7.3)
 - When implementing a "greenfield" application, consider supporting
   `FIDO U2F <https://en.wikipedia.org/wiki/Universal_2nd_Factor>`_/`WebAuthn <https://www.w3.org/TR/webauthn/>`_ in
-  addition to HOTP/TOTP. U2F uses asymmetric cryptography to avoid using a shared secret design, which strengthens your
-  MFA solution against server-side attacks. Hardware U2F also sequesters the client secret in a dedicated single-purpose
-  device, which strengthens your clients against client-side attacks. And by automating scoping of credentials to
-  relying party IDs (application origin/domain names), U2F adds protection against phishing attacks. One implementation
-  of FIDO U2F/WebAuthn is PyOTP's sister project, `PyWARP <https://github.com/pyauth/pywarp>`_.
+  addition to or instead of HOTP/TOTP. U2F uses asymmetric cryptography to avoid using a shared secret design, which
+  strengthens your MFA solution against server-side attacks. Hardware U2F also sequesters the client secret in a
+  dedicated single-purpose device, which strengthens your clients against client-side attacks. And by automating scoping
+  of credentials to relying party IDs (application origin/domain names), U2F adds protection against phishing attacks.
+  One implementation of FIDO U2F/WebAuthn is PyOTP's sister project, `PyWARP <https://github.com/pyauth/pywarp>`_.
 
 We also recommend that implementers read the
 `OWASP Authentication Cheat Sheet
