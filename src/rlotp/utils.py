@@ -1,6 +1,6 @@
 import unicodedata
 from hmac import compare_digest
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Union, Tuple
 from urllib.parse import quote, urlencode, urlparse
 
 
@@ -10,6 +10,8 @@ def build_uri(
     initial_count: Optional[int] = None,
     issuer: Optional[str] = None,
     algorithm: Optional[str] = None,
+    rdigits: Optional[Tuple[int, int]] = None,
+    chargroup: Optional[str] = None,
     digits: Optional[int] = None,
     period: Optional[int] = None,
     image: Optional[str] = None,
@@ -60,6 +62,10 @@ def build_uri(
         url_args["counter"] = initial_count
     if is_algorithm_set:
         url_args["algorithm"] = algorithm.upper()  # type: ignore
+    if rdigits:
+        url_args["rdigits"] = "-".join(map(str, rdigits))
+    if chargroup:
+        url_args["chargroup"] = chargroup
     if is_digits_set:
         url_args["digits"] = digits
     if is_period_set:
@@ -86,3 +92,15 @@ def strings_equal(s1: str, s2: str) -> bool:
     s1 = unicodedata.normalize("NFKC", s1)
     s2 = unicodedata.normalize("NFKC", s2)
     return compare_digest(s1.encode("utf-8"), s2.encode("utf-8"))
+
+def normalize(v, nlist):
+    """
+    Normalizes a value between two numbers (n1 and n2) to a range of n1 to n2.
+    """
+    v = abs(v)
+    if v >= nlist[0] and v <= nlist[-1]:
+        return v
+    n = len(nlist)
+    if v < n:
+        return nlist[v]
+    return nlist[v % n]

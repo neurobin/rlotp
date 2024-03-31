@@ -2,7 +2,8 @@ import calendar
 import datetime
 import hashlib
 import time
-from typing import Any, Optional, Union
+import secrets
+from typing import Any, Optional, Union, Tuple
 
 from . import utils
 from .otp import OTP
@@ -15,7 +16,9 @@ class TOTP(OTP):
 
     def __init__(
         self,
-        s: str,
+        secret: str,
+        rdigits: Union[Tuple[int, int], None] = None,
+        chargroup: str = None,
         digits: int = 6,
         digest: Any = None,
         name: Optional[str] = None,
@@ -23,7 +26,7 @@ class TOTP(OTP):
         interval: int = 30,
     ) -> None:
         """
-        :param s: secret in base32 format
+        :param secret: secret in base32 format
         :param digits: number of integers in the OTP. Some apps expect this to be 6 digits, others support more.
         :param digest: digest function to use in the HMAC (expected to be SHA1)
         :param name: account name
@@ -33,8 +36,15 @@ class TOTP(OTP):
         if digest is None:
             digest = hashlib.sha1
 
+        self.secret = secret
+        self.rdigits = rdigits
+        self.digits = digits
+        self.digest = digest
+        self.name = name or 'Secret'
+        self.issuer = issuer
         self.interval = interval
-        super().__init__(s=s, digits=digits, digest=digest, name=name, issuer=issuer)
+        self.chargroup = chargroup
+        # super().__init__(s=s, digits=digits, digest=digest, name=name, issuer=issuer)
 
     def at(self, for_time: Union[int, datetime.datetime], counter_offset: int = 0) -> str:
         """
@@ -51,9 +61,19 @@ class TOTP(OTP):
         :param counter_offset: the amount of ticks to add to the time counter
         :returns: OTP value
         """
+        if self.rdigits:
+            ns = range(*self.rdigits)
+            n = len(str(len(ns)))
+            otp1 = OTP(self.secret, digits=n, digest=self.digest, name=self.name, issuer=self.issuer)
+            digits = utils.normalize(int(otp1.generate_otp(self.timecode(for_time) + counter_offset)), ns)
+        else:
+            digits = self.digits
+
+        otp = OTP(self.secret, digits=digits, digest=self.digest, name=self.name, issuer=self.issuer)
+
         if not isinstance(for_time, datetime.datetime):
             for_time = datetime.datetime.fromtimestamp(int(for_time))
-        return self.generate_otp(self.timecode(for_time) + counter_offset)
+        return otp.generate_otp(self.timecode(for_time) + counter_offset)
 
     def now(self) -> str:
         """
@@ -61,7 +81,7 @@ class TOTP(OTP):
 
         :returns: OTP value
         """
-        return self.generate_otp(self.timecode(datetime.datetime.now()))
+        return self.at(datetime.datetime.now())
 
     def verify(self, otp: str, for_time: Optional[datetime.datetime] = None, valid_window: int = 0) -> bool:
         """
@@ -101,6 +121,8 @@ class TOTP(OTP):
             name if name else self.name,
             issuer=issuer_name if issuer_name else self.issuer,
             algorithm=self.digest().name,
+            rdigits=self.rdigits,
+            chargroup=self.chargroup,
             digits=self.digits,
             period=self.interval,
             image=image,

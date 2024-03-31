@@ -18,8 +18,6 @@ class OTP(object):
         issuer: Optional[str] = None,
     ) -> None:
         self.digits = digits
-        if digits > 10:
-            raise ValueError("digits must be no greater than 10")
         self.digest = digest
         self.secret = s
         self.name = name or "Secret"
