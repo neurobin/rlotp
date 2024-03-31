@@ -1,8 +1,10 @@
 import base64
 import hashlib
 import hmac
+import string
 from typing import Any, Optional
 from .steam import STEAM_CHARS, STEAM_DEFAULT_DIGITS
+from . import utils
 
 
 STEAM_CHARS = "23456789BCDFGHJKMNPQRTVWXY"  # steam's custom alphabet
@@ -32,6 +34,11 @@ class OTP(object):
         self.name = name or "Secret"
         self.issuer = issuer
         self.impl = impl
+        if self.chargroup and self.chargroup.startswith('alpha'):
+            self.chargroup = string.digits + string.ascii_uppercase
+        if self.chargroup and  len(self.chargroup) < self.digits:
+            raise ValueError("chargroup must be at least the same length as the number of digits")
+
 
     def generate_otp(self, input: int) -> str:
         """
@@ -60,8 +67,8 @@ class OTP(object):
         else:
             str_code = str(10_000_000_000 + (code % 10**self.digits))
             v = str_code[-self.digits :]
-            if self.chargroup == 'alpha':
-                v = base64.b64encode(v.encode()).decode().lower()[0:self.digits]
+            if self.chargroup:
+                v = utils.pick_chars(v, self.chargroup)
         return v
 
     def byte_secret(self) -> bytes:

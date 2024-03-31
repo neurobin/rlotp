@@ -1,4 +1,5 @@
 import unicodedata
+import string
 from hmac import compare_digest
 from typing import Dict, Optional, Union, Tuple
 from urllib.parse import quote, urlencode, urlparse
@@ -96,7 +97,7 @@ def strings_equal(s1: str, s2: str) -> bool:
     s2 = unicodedata.normalize("NFKC", s2)
     return compare_digest(s1.encode("utf-8"), s2.encode("utf-8"))
 
-def normalize(v, nlist):
+def normalize(v: int, nlist):
     """
     Normalizes a value between two numbers (n1 and n2) to a range of n1 to n2.
     """
@@ -107,3 +108,17 @@ def normalize(v, nlist):
     if v < n:
         return nlist[v]
     return nlist[v % n]
+
+def pick_chars(pin:str, chargroup):
+    """ Picks characters from a character group based on the pin value """
+    total_chars = len(chargroup)
+    otp_len = len(pin)
+    v = ""
+    for i in range(otp_len):
+        if i % 2 == 0:
+            pos = int(pin[i:i+2]) % total_chars
+            char = chargroup[pos]
+            v += char
+        else:
+            v += pin[i]
+    return v

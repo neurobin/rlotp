@@ -9,7 +9,7 @@ from . import utils
 from .otp import OTP
 
 
-class TOTP(OTP):
+class TOTP():
     """
     Handler for time-based OTP counters.
     """
@@ -148,7 +148,6 @@ class TOTP(OTP):
         Accepts either a timezone naive (`for_time.tzinfo is None`) or
         a timezone aware datetime as argument and returns the
         corresponding counter value (timecode).
-
         """
         if for_time.tzinfo:
             return int(calendar.timegm(for_time.utctimetuple()) / self.interval)
