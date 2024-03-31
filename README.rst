@@ -1,16 +1,16 @@
-PyOTP - The Python One-Time Password Library
+RLOTP - The Python One-Time Password Library
 ============================================
 
-PyOTP is a Python library for generating and verifying one-time passwords. It can be used to implement two-factor (2FA)
+RLOTP is a Python library for generating and verifying one-time passwords. It can be used to implement two-factor (2FA)
 or multi-factor (MFA) authentication methods in web applications and in other systems that require users to log in.
 
 Open MFA standards are defined in `RFC 4226 <https://tools.ietf.org/html/rfc4226>`_ (HOTP: An HMAC-Based One-Time
 Password Algorithm) and in `RFC 6238 <https://tools.ietf.org/html/rfc6238>`_ (TOTP: Time-Based One-Time Password
-Algorithm). PyOTP implements server-side support for both of these standards. Client-side support can be enabled by
+Algorithm). RLOTP implements server-side support for both of these standards. Client-side support can be enabled by
 sending authentication codes to users over SMS or email (HOTP) or, for TOTP, by instructing users to use `Google
 Authenticator <https://en.wikipedia.org/wiki/Google_Authenticator>`_, `Authy <https://www.authy.com/>`_, or another
 compatible app. Users can set up auth tokens in their apps easily by using their phone camera to scan `otpauth://
-<https://github.com/google/google-authenticator/wiki/Key-Uri-Format>`_ QR codes provided by PyOTP.
+<https://github.com/google/google-authenticator/wiki/Key-Uri-Format>`_ QR codes provided by RLOTP.
 
 Implementers should read and follow the `HOTP security requirements <https://tools.ietf.org/html/rfc4226#section-7>`_
 and `TOTP security considerations <https://tools.ietf.org/html/rfc6238#section-5>`_ sections of the relevant RFCs. At
@@ -28,7 +28,7 @@ minimum, application implementers should follow this checklist:
   strengthens your MFA solution against server-side attacks. Hardware U2F also sequesters the client secret in a
   dedicated single-purpose device, which strengthens your clients against client-side attacks. And by automating scoping
   of credentials to relying party IDs (application origin/domain names), U2F adds protection against phishing attacks.
-  One implementation of FIDO U2F/WebAuthn is PyOTP's sister project, `PyWARP <https://github.com/pyauth/pywarp>`_.
+  One implementation of FIDO U2F/WebAuthn is RLOTP's sister project, `PyWARP <https://github.com/neurobin/pywarp>`_.
 
 We also recommend that implementers read the
 `OWASP Authentication Cheat Sheet
@@ -50,7 +50,7 @@ Installation
 ------------
 ::
 
-    pip install pyotp
+    pip install rlotp
 
 Usage
 -----
@@ -59,10 +59,10 @@ Time-based OTPs
 ~~~~~~~~~~~~~~~
 ::
 
-    import pyotp
+    import rlotp
     import time
 
-    totp = pyotp.TOTP('base32secret3232')
+    totp = rlotp.TOTP('base32secret3232')
     totp.now() # => '492039'
 
     # OTP verified for current time
@@ -74,9 +74,9 @@ Counter-based OTPs
 ~~~~~~~~~~~~~~~~~~
 ::
 
-    import pyotp
-    
-    hotp = pyotp.HOTP('base32secret3232')
+    import rlotp
+
+    hotp = rlotp.HOTP('base32secret3232')
     hotp.at(0) # => '260182'
     hotp.at(1) # => '055283'
     hotp.at(1401) # => '316439'
@@ -90,23 +90,23 @@ Generating a Secret Key
 A helper function is provided to generate a 32-character base32 secret, compatible with Google Authenticator and other
 OTP apps::
 
-    pyotp.random_base32()
+    rlotp.random_base32()
 
 Some applications want the secret key to be formatted as a hex-encoded string::
 
-    pyotp.random_hex()  # returns a 40-character hex-encoded secret
+    rlotp.random_hex()  # returns a 40-character hex-encoded secret
 
 Google Authenticator Compatible
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-PyOTP works with the Google Authenticator iPhone and Android app, as well as other OTP apps like Authy. PyOTP includes
+RLOTP works with the Google Authenticator iPhone and Android app, as well as other OTP apps like Authy. RLOTP includes
 the ability to generate provisioning URIs for use with the QR Code scanner built into these MFA client apps::
 
-    pyotp.totp.TOTP('JBSWY3DPEHPK3PXP').provisioning_uri(name='alice@google.com', issuer_name='Secure App')
+    rlotp.totp.TOTP('JBSWY3DPEHPK3PXP').provisioning_uri(name='alice@google.com', issuer_name='Secure App')
 
     >>> 'otpauth://totp/Secure%20App:alice%40google.com?secret=JBSWY3DPEHPK3PXP&issuer=Secure%20App'
 
-    pyotp.hotp.HOTP('JBSWY3DPEHPK3PXP').provisioning_uri(name="alice@google.com", issuer_name="Secure App", initial_count=0)
+    rlotp.hotp.HOTP('JBSWY3DPEHPK3PXP').provisioning_uri(name="alice@google.com", issuer_name="Secure App", initial_count=0)
 
     >>> 'otpauth://hotp/Secure%20App:alice%40google.com?secret=JBSWY3DPEHPK3PXP&issuer=Secure%20App&counter=0'
 
@@ -115,13 +115,13 @@ scanned and added to the users list of OTP credentials.
 
 Parsing these URLs is also supported::
 
-    pyotp.parse_uri('otpauth://totp/Secure%20App:alice%40google.com?secret=JBSWY3DPEHPK3PXP&issuer=Secure%20App')
+    rlotp.parse_uri('otpauth://totp/Secure%20App:alice%40google.com?secret=JBSWY3DPEHPK3PXP&issuer=Secure%20App')
 
-    >>> <pyotp.totp.TOTP object at 0xFFFFFFFF>
+    >>> <rlotp.totp.TOTP object at 0xFFFFFFFF>
 
-    pyotp.parse_uri('otpauth://hotp/Secure%20App:alice%40google.com?secret=JBSWY3DPEHPK3PXP&issuer=Secure%20App&counter=0'
+    rlotp.parse_uri('otpauth://hotp/Secure%20App:alice%40google.com?secret=JBSWY3DPEHPK3PXP&issuer=Secure%20App&counter=0'
 
-    >>> <pyotp.totp.HOTP object at 0xFFFFFFFF>
+    >>> <rlotp.totp.HOTP object at 0xFFFFFFFF>
 
 Working example
 ~~~~~~~~~~~~~~~
@@ -132,8 +132,8 @@ Scan the following barcode with your phone's OTP app (e.g. Google Authenticator)
 
 Now run the following and compare the output::
 
-    import pyotp
-    totp = pyotp.TOTP("JBSWY3DPEHPK3PXP")
+    import rlotp
+    totp = rlotp.TOTP("JBSWY3DPEHPK3PXP")
     print("Current OTP:", totp.now())
 
 Third-party contributions
@@ -141,15 +141,15 @@ Third-party contributions
 The following third-party contributions are not described by a standard, not officially supported, and provided for
 reference only:
 
-* ``pyotp.contrib.Steam()``: An implementation of Steam TOTP. Uses the same API as `pyotp.TOTP()`.
+* ``rlotp.contrib.Steam()``: An implementation of Steam TOTP. Uses the same API as `rlotp.TOTP()`.
 
 Links
 ~~~~~
 
-* `Project home page (GitHub) <https://github.com/pyauth/pyotp>`_
-* `Documentation <https://pyauth.github.io/pyotp/>`_
-* `Package distribution (PyPI) <https://pypi.python.org/pypi/pyotp>`_
-* `Change log <https://github.com/pyauth/pyotp/blob/master/Changes.rst>`_
+* `Project home page (GitHub) <https://github.com/neurobin/rlotp>`_
+* `Documentation <https://neurobin.github.io/rlotp/>`_
+* `Package distribution (PyPI) <https://pypi.python.org/pypi/rlotp>`_
+* `Change log <https://github.com/neurobin/rlotp/blob/master/Changes.rst>`_
 * `RFC 4226: HOTP: An HMAC-Based One-Time Password <https://tools.ietf.org/html/rfc4226>`_
 * `RFC 6238: TOTP: Time-Based One-Time Password Algorithm <https://tools.ietf.org/html/rfc6238>`_
 * `ROTP <https://github.com/mdp/rotp>`_ - Original Ruby OTP library by `Mark Percival <https://github.com/mdp>`_
@@ -160,7 +160,7 @@ Links
 For new applications:
 
 * `WebAuthn <https://www.w3.org/TR/webauthn/>`_
-* `PyWARP <https://github.com/pyauth/pywarp>`_
+* `PyWARP <https://github.com/neurobin/pywarp>`_
 
 Versioning
 ~~~~~~~~~~
@@ -169,13 +169,13 @@ recommended that application developers pin the package version and manage it us
 <https://github.com/jazzband/pip-tools>`_ or similar. For library developers, pinning the major version is
 recommended.
 
-.. image:: https://github.com/pyauth/pyotp/workflows/Python%20package/badge.svg
-        :target: https://github.com/pyauth/pyotp/actions
-.. image:: https://img.shields.io/codecov/c/github/pyauth/pyotp/master.svg
-        :target: https://codecov.io/github/pyauth/pyotp?branch=master
-.. image:: https://img.shields.io/pypi/v/pyotp.svg
-        :target: https://pypi.python.org/pypi/pyotp
-.. image:: https://img.shields.io/pypi/l/pyotp.svg
-        :target: https://pypi.python.org/pypi/pyotp
-.. image:: https://readthedocs.org/projects/pyotp/badge/?version=latest
-        :target: https://pyotp.readthedocs.io/
+.. image:: https://github.com/neurobin/rlotp/workflows/Python%20package/badge.svg
+        :target: https://github.com/neurobin/rlotp/actions
+.. image:: https://img.shields.io/codecov/c/github/neurobin/rlotp/master.svg
+        :target: https://codecov.io/github/neurobin/rlotp?branch=master
+.. image:: https://img.shields.io/pypi/v/rlotp.svg
+        :target: https://pypi.python.org/pypi/rlotp
+.. image:: https://img.shields.io/pypi/l/rlotp.svg
+        :target: https://pypi.python.org/pypi/rlotp
+.. image:: https://readthedocs.org/projects/rlotp/badge/?version=latest
+        :target: https://rlotp.readthedocs.io/

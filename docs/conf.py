@@ -3,9 +3,9 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
-project = "PyOTP"
-copyright = "PyOTP contributors"
-author = "PyOTP contributors"
+project = "RLOTP"
+copyright = "RLOTP contributors"
+author = "RLOTP contributors"
 version = ""
 release = ""
 language = "en"
@@ -18,11 +18,11 @@ intersphinx_mapping = {
     "https://docs.python.org/3": None,
 }
 templates_path = [""]
-ogp_site_url = "https://pyauth.github.io/pyotp/"
+ogp_site_url = "https://neurobin.github.io/rlotp/"
 
 if "readthedocs.org" in os.getcwd().split("/"):
     with open("index.rst", "w") as fh:
-        fh.write("Documentation for this project has moved to https://pyauth.github.io/pyotp")
+        fh.write("Documentation for this project has moved to https://neurobin.github.io/rlotp")
 else:
     html_theme = "furo"
     html_sidebars = {

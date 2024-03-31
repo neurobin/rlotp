@@ -157,8 +157,8 @@ Version 2.0.1 (2015-09-28)
 
 Version 2.0.0 (2015-08-22)
 --------------------------
-- The ``pyotp.HOTP.at()``, ``pyotp.TOTP.at()``, and
-  ``pyotp.TOTP.now()`` methods now return strings instead of
+- The ``rlotp.HOTP.at()``, ``rlotp.TOTP.at()``, and
+  ``rlotp.TOTP.now()`` methods now return strings instead of
   integers. Thanks to Rohan Dhaimade (PR #16).
 
 Version 1.4.2 (2015-07-21)

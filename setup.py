@@ -3,17 +3,17 @@
 from setuptools import setup
 
 setup(
-    name="pyotp",
+    name="rlotp",
     version="2.9.0",
-    url="https://github.com/pyotp/pyotp",
+    url="https://github.com/rlotp/rlotp",
     project_urls={
-        "Documentation": "https://pyauth.github.io/pyotp",
-        "Source Code": "https://github.com/pyauth/pyotp",
-        "Issue Tracker": "https://github.com/pyauth/pyotp/issues",
-        "Change Log": "https://github.com/pyauth/pyotp/blob/master/Changes.rst",
+        "Documentation": "https://neurobin.github.io/rlotp",
+        "Source Code": "https://github.com/neurobin/rlotp",
+        "Issue Tracker": "https://github.com/neurobin/rlotp/issues",
+        "Change Log": "https://github.com/neurobin/rlotp/blob/master/Changes.rst",
     },
     license="MIT License",
-    author="PyOTP contributors",
+    author="RLOTP contributors",
     author_email="kislyuk@gmail.com",
     description="Python One Time Password Library",
     long_description=open("README.rst").read(),
@@ -22,9 +22,9 @@ setup(
     extras_require={
         "test": ["coverage", "wheel", "ruff", "mypy"],
     },
-    packages=["pyotp", "pyotp.contrib"],
+    packages=["rlotp", "rlotp.contrib"],
     package_dir={"": "src"},
-    package_data={"pyotp": ["py.typed"]},
+    package_data={"rlotp": ["py.typed"]},
     platforms=["MacOS X", "Posix"],
     zip_safe=False,
     test_suite="test",

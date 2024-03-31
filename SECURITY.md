@@ -2,7 +2,7 @@
 
 ## Reporting a Vulnerability
 
-If you believe you have found a security vulnerability in this project, please report it to us by submitting a security advisory at https://github.com/pyauth/pyotp/security/advisories. You can expect an initial response within 14 days.
+If you believe you have found a security vulnerability in this project, please report it to us by submitting a security advisory at https://github.com/neurobin/rlotp/security/advisories. You can expect an initial response within 14 days.
 
 ## Supported Versions
 

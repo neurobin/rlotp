@@ -44,7 +44,7 @@ class TOTP(OTP):
 
         .. code:: python
 
-            totp = pyotp.TOTP(...)
+            totp = rlotp.TOTP(...)
             time_remaining = totp.interval - datetime.datetime.now().timestamp() % totp.interval
 
         :param for_time: the time to generate an OTP for

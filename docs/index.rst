@@ -3,19 +3,19 @@
 API documentation
 =================
 
-.. automodule:: pyotp
+.. automodule:: rlotp
    :members:
 
-.. automodule:: pyotp.totp
+.. automodule:: rlotp.totp
    :members:
 
-.. automodule:: pyotp.hotp
+.. automodule:: rlotp.hotp
    :members:
 
-.. automodule:: pyotp.utils
+.. automodule:: rlotp.utils
    :members:
 
-.. automodule:: pyotp.contrib.steam
+.. automodule:: rlotp.contrib.steam
    :members:
 
 Change log

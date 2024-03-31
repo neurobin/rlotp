@@ -9,7 +9,7 @@ STEAM_DEFAULT_DIGITS = 5  # Steam TOTP code length
 
 class Steam(TOTP):
     """
-    Steam's custom TOTP. Subclass of `pyotp.totp.TOTP`.
+    Steam's custom TOTP. Subclass of `rlotp.totp.TOTP`.
     """
 
     def __init__(
