@@ -1,16 +1,22 @@
 
 import os
-import sys
+import sys, hashlib
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 import rlotp  # noqa
 from rlotp import utils
 
 # print(utils.normalize(5, 5, 10))  # => 5
 
-totp = rlotp.TOTP('base32secret3232', rdigits=(6, 8), interval=5)
+totp = rlotp.TOTP('base32secret3232', rdigits=(6, 10), interval=5, digest=hashlib.sha256, chargroup='alpha')
 
 print(totp.now()) # => '492039'
 print(totp.provisioning_uri(name='jahid@example.com',issuer_name='Madmin', image='https://example.com/image.png'))
+
+
+hotp = rlotp.HOTP('base32secret3232', rdigits=(6, 10), digest=hashlib.sha256, chargroup='alpha')
+
+print(hotp.at(2)) # => '492039'
+print(hotp.provisioning_uri(name='jahid@example.com',issuer_name='Madmin', image='https://example.com/image.png'))
 
 # # OTP verified for current time
 # totp.verify('492039') # => True

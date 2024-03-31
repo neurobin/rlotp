@@ -1,29 +1,44 @@
 import hashlib
+import string
 from re import split
 from typing import Any, Dict, Sequence
 from urllib.parse import parse_qsl, unquote, urlparse
 
-from . import contrib  # noqa:F401
 from .compat import random
 from .hotp import HOTP as HOTP
 from .otp import OTP as OTP
 from .totp import TOTP as TOTP
 
 
-def random_base32(length: int = 32, chars: Sequence[str] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567") -> str:
+def random_base32(length: int = 32, chars: Sequence[str] = None) -> str:
     # Note: the otpauth scheme DOES NOT use base32 padding for secret lengths not divisible by 8.
     # Some third-party tools have bugs when dealing with such secrets.
     # We might consider warning the user when generating a secret of length not divisible by 8.
+    if not chars:
+        chars = string.ascii_letters + string.digits
     if length < 32:
         raise ValueError("Secrets should be at least 160 bits")
-
     return "".join(random.choice(chars) for _ in range(length))
 
 
-def random_hex(length: int = 40, chars: Sequence[str] = "ABCDEF0123456789") -> str:
+def random_hex(length: int = 40) -> str:
     if length < 40:
         raise ValueError("Secrets should be at least 160 bits")
-    return random_base32(length=length, chars=chars)
+    return random_base32(length=length, chars="ABCDEF0123456789")
+
+
+def secret(length: int = 32, chars: Sequence[str] = None, hex: bool = False) -> str:
+    """
+    Generates a random secret key.
+
+    :param length: length of the secret key
+    :param chars: characters to use in the secret key
+    :param hex: if True, generate a hex secret key
+    :returns: secret key
+    """
+    if hex:
+        return random_hex(length)
+    return random_base32(length, chars)
 
 
 def parse_uri(uri: str) -> OTP:
@@ -40,11 +55,17 @@ def parse_uri(uri: str) -> OTP:
     # Secret (to be filled in later)
     secret = None
 
-    # Encoder (to be filled in later)
-    encoder = None
+    # Implementation (to be filled in later)
+    impl = None
 
     # Digits (to be filled in later)
     digits = None
+
+    # rdigits (to be filled in later)
+    rdigits = None
+
+    # chargroup (to be filled in later)
+    chargroup = None
 
     # Data we'll parse to the correct constructor
     otp_data: Dict[str, Any] = {}
@@ -80,28 +101,29 @@ def parse_uri(uri: str) -> OTP:
                 otp_data["digest"] = hashlib.sha512
             else:
                 raise ValueError("Invalid value for algorithm, must be SHA1, SHA256 or SHA512")
-        elif key == "encoder":
-            encoder = value
+        elif key == "impl":
+            impl = value
+            otp_data["impl"] = impl
         elif key == "digits":
             digits = int(value)
             otp_data["digits"] = digits
+        elif key == "rdigits":
+            rdigits = tuple(map(int, value.split("-")))
+            otp_data["rdigits"] = rdigits
+        elif key == "chargroup":
+            chargroup = value
+            otp_data["chargroup"] = chargroup
         elif key == "period":
             otp_data["interval"] = int(value)
         elif key == "counter":
             otp_data["initial_count"] = int(value)
         elif key != "image":
             raise ValueError("{} is not a valid parameter".format(key))
-    
-    if encoder != "steam":
-        if digits is not None and digits not in [6, 7, 8]:
-            raise ValueError("Digits may only be 6, 7, or 8")
-    
+
     if not secret:
         raise ValueError("No secret found in URI")
 
     # Create objects
-    if encoder == "steam":
-        return contrib.Steam(secret, **otp_data)
     if parsed_uri.netloc == "totp":
         return TOTP(secret, **otp_data)
     elif parsed_uri.netloc == "hotp":

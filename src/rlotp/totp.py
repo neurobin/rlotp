@@ -24,6 +24,7 @@ class TOTP(OTP):
         name: Optional[str] = None,
         issuer: Optional[str] = None,
         interval: int = 30,
+        impl: Optional[str] = None,
     ) -> None:
         """
         :param secret: secret in base32 format
@@ -33,18 +34,22 @@ class TOTP(OTP):
         :param issuer: issuer
         :param interval: the time interval in seconds for OTP. This defaults to 30.
         """
+        self.rdigits = None
+        if rdigits:
+            if rdigits[0] < 6 or rdigits[1] > 10:
+                raise ValueError("rdigits must be between 6 and 10")
+            self.rdigits = (rdigits[0], rdigits[1] + 1)
         if digest is None:
             digest = hashlib.sha1
 
         self.secret = secret
-        self.rdigits = rdigits
         self.digits = digits
         self.digest = digest
         self.name = name or 'Secret'
         self.issuer = issuer
         self.interval = interval
         self.chargroup = chargroup
-        # super().__init__(s=s, digits=digits, digest=digest, name=name, issuer=issuer)
+        self.impl = impl
 
     def at(self, for_time: Union[int, datetime.datetime], counter_offset: int = 0) -> str:
         """
@@ -65,15 +70,18 @@ class TOTP(OTP):
             ns = range(*self.rdigits)
             n = len(str(len(ns)))
             otp1 = OTP(self.secret, digits=n, digest=self.digest, name=self.name, issuer=self.issuer)
-            digits = utils.normalize(int(otp1.generate_otp(self.timecode(for_time) + counter_offset)), ns)
+            digits = utils.normalize(int(otp1.generate_otp(self.timecode(for_time) + counter_offset) if for_time else counter_offset), ns)
         else:
             digits = self.digits
 
-        otp = OTP(self.secret, digits=digits, digest=self.digest, name=self.name, issuer=self.issuer)
+        otp = OTP(self.secret, digits=digits, digest=self.digest, name=self.name, issuer=self.issuer, chargroup=self.chargroup, impl=self.impl)
 
-        if not isinstance(for_time, datetime.datetime):
-            for_time = datetime.datetime.fromtimestamp(int(for_time))
-        return otp.generate_otp(self.timecode(for_time) + counter_offset)
+        if for_time:
+            if not isinstance(for_time, datetime.datetime):
+                for_time = datetime.datetime.fromtimestamp(int(for_time))
+            return otp.generate_otp(self.timecode(for_time) + counter_offset)
+        # else it's a HOTP, counter_offset is the counter
+        return otp.generate_otp(counter_offset)
 
     def now(self) -> str:
         """
@@ -103,8 +111,11 @@ class TOTP(OTP):
 
         return utils.strings_equal(str(otp), str(self.at(for_time)))
 
-    def provisioning_uri(
-        self, name: Optional[str] = None, issuer_name: Optional[str] = None, image: Optional[str] = None
+    def provisioning_uri(self,
+            name: Optional[str] = None,
+            issuer_name: Optional[str] = None,
+            image: Optional[str] = None,
+            initial_count: Optional[int] = None,
     ) -> str:
 
         """
@@ -116,6 +127,8 @@ class TOTP(OTP):
             https://github.com/google/google-authenticator/wiki/Key-Uri-Format
 
         """
+        if not initial_count:
+            initial_count = self.initial_count if hasattr(self, 'initial_count') else None
         return utils.build_uri(
             self.secret,
             name if name else self.name,
@@ -126,6 +139,8 @@ class TOTP(OTP):
             digits=self.digits,
             period=self.interval,
             image=image,
+            impl=self.impl,
+            initial_count=initial_count,
         )
 
     def timecode(self, for_time: datetime.datetime) -> int:

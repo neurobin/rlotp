@@ -2,7 +2,11 @@ import base64
 import hashlib
 import hmac
 from typing import Any, Optional
+from .steam import STEAM_CHARS, STEAM_DEFAULT_DIGITS
 
+
+STEAM_CHARS = "23456789BCDFGHJKMNPQRTVWXY"  # steam's custom alphabet
+STEAM_DEFAULT_DIGITS = 5  # Steam TOTP code length
 
 class OTP(object):
     """
@@ -11,17 +15,23 @@ class OTP(object):
 
     def __init__(
         self,
-        s: str,
+        secret: str,
         digits: int = 6,
         digest: Any = hashlib.sha1,
+        chargroup: Optional[str] = None,
         name: Optional[str] = None,
         issuer: Optional[str] = None,
+        impl: Optional[str] = None,
     ) -> None:
+        if digits > 10:
+            raise ValueError("Maximum number of digits is 10")
         self.digits = digits
         self.digest = digest
-        self.secret = s
+        self.chargroup = chargroup
+        self.secret = secret
         self.name = name or "Secret"
         self.issuer = issuer
+        self.impl = impl
 
     def generate_otp(self, input: int) -> str:
         """
@@ -39,8 +49,20 @@ class OTP(object):
             | (hmac_hash[offset + 2] & 0xFF) << 8
             | (hmac_hash[offset + 3] & 0xFF)
         )
-        str_code = str(10_000_000_000 + (code % 10**self.digits))
-        return str_code[-self.digits :]
+        v = ""
+        if self.impl == "steam":
+            total_chars = len(STEAM_CHARS)
+            for _ in range(STEAM_DEFAULT_DIGITS):
+                pos = code % total_chars
+                char = STEAM_CHARS[int(pos)]
+                v += char
+                code //= total_chars
+        else:
+            str_code = str(10_000_000_000 + (code % 10**self.digits))
+            v = str_code[-self.digits :]
+            if self.chargroup == 'alpha':
+                v = base64.b64encode(v.encode()).decode().lower()[0:self.digits]
+        return v
 
     def byte_secret(self) -> bytes:
         secret = self.secret
