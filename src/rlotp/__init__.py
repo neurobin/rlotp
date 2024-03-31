@@ -15,7 +15,7 @@ def random_base32(length: int = 32, chars: Sequence[str] = None) -> str:
     # Some third-party tools have bugs when dealing with such secrets.
     # We might consider warning the user when generating a secret of length not divisible by 8.
     if not chars:
-        chars = string.ascii_letters + string.digits
+        chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
     if length < 32:
         raise ValueError("Secrets should be at least 160 bits")
     return "".join(random.choice(chars) for _ in range(length))
