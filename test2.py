@@ -7,7 +7,7 @@ from rlotp import utils
 
 # print(utils.normalize(5, 5, 10))  # => 5
 
-totp = rlotp.TOTP('base32secret3232', rdigits=(6, 10), interval=5, digest=hashlib.sha256, chargroup='alpha')
+totp = rlotp.TOTP('base32secret3232', rdigits=(6, 10), period=5, digest=hashlib.sha256, chargroup='alpha')
 
 print(totp.now()) # => '492039'
 print(totp.provisioning_uri(name='jahid@example.com',issuer_name='Madmin', image='https://example.com/image.png'))

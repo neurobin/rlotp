@@ -23,7 +23,7 @@ class OTP(object):
         chargroup: Optional[str] = None,
         name: Optional[str] = None,
         issuer: Optional[str] = None,
-        impl: Optional[str] = None,
+        encoder: Optional[str] = None,
     ) -> None:
         if digits > 10:
             raise ValueError("Maximum number of digits is 10")
@@ -33,7 +33,7 @@ class OTP(object):
         self.secret = secret
         self.name = name or "Secret"
         self.issuer = issuer
-        self.impl = impl
+        self.encoder = encoder
         if self.chargroup and self.chargroup.startswith('alpha'):
             self.chargroup = string.digits + string.ascii_uppercase
         if self.chargroup and  len(self.chargroup) < self.digits:
@@ -57,7 +57,7 @@ class OTP(object):
             | (hmac_hash[offset + 3] & 0xFF)
         )
         v = ""
-        if self.impl == "steam":
+        if self.encoder == "steam":
             total_chars = len(STEAM_CHARS)
             for _ in range(STEAM_DEFAULT_DIGITS):
                 pos = code % total_chars

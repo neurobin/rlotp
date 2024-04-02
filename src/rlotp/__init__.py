@@ -56,7 +56,7 @@ def parse_uri(uri: str) -> OTP:
     secret = None
 
     # Implementation (to be filled in later)
-    impl = None
+    encoder = None
 
     # Digits (to be filled in later)
     digits = None
@@ -101,9 +101,9 @@ def parse_uri(uri: str) -> OTP:
                 otp_data["digest"] = hashlib.sha512
             else:
                 raise ValueError("Invalid value for algorithm, must be SHA1, SHA256 or SHA512")
-        elif key == "impl":
-            impl = value
-            otp_data["impl"] = impl
+        elif key == "encoder":
+            encoder = value
+            otp_data["encoder"] = encoder
         elif key == "digits":
             digits = int(value)
             otp_data["digits"] = digits
@@ -114,7 +114,7 @@ def parse_uri(uri: str) -> OTP:
             chargroup = value
             otp_data["chargroup"] = chargroup
         elif key == "period":
-            otp_data["interval"] = int(value)
+            otp_data["period"] = int(value)
         elif key == "counter":
             otp_data["initial_count"] = int(value)
         elif key != "image":

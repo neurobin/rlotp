@@ -23,8 +23,8 @@ class TOTP():
         digest: Any = None,
         name: Optional[str] = None,
         issuer: Optional[str] = None,
-        interval: int = 30,
-        impl: Optional[str] = None,
+        period: int = 30,
+        encoder: Optional[str] = None,
     ) -> None:
         """
         :param secret: secret in base32 format
@@ -32,7 +32,7 @@ class TOTP():
         :param digest: digest function to use in the HMAC (expected to be SHA1)
         :param name: account name
         :param issuer: issuer
-        :param interval: the time interval in seconds for OTP. This defaults to 30.
+        :param period: the time period in seconds for OTP. This defaults to 30.
         """
         self.rdigits = None
         if rdigits:
@@ -47,9 +47,9 @@ class TOTP():
         self.digest = digest
         self.name = name or 'Secret'
         self.issuer = issuer
-        self.interval = interval
+        self.period = period
         self.chargroup = chargroup
-        self.impl = impl
+        self.encoder = encoder
 
     def at(self, for_time: Union[int, datetime.datetime], counter_offset: int = 0) -> str:
         """
@@ -60,7 +60,7 @@ class TOTP():
         .. code:: python
 
             totp = rlotp.TOTP(...)
-            time_remaining = totp.interval - datetime.datetime.now().timestamp() % totp.interval
+            time_remaining = totp.period - datetime.datetime.now().timestamp() % totp.period
 
         :param for_time: the time to generate an OTP for
         :param counter_offset: the amount of ticks to add to the time counter
@@ -74,7 +74,7 @@ class TOTP():
         else:
             digits = self.digits
 
-        otp = OTP(self.secret, digits=digits, digest=self.digest, name=self.name, issuer=self.issuer, chargroup=self.chargroup, impl=self.impl)
+        otp = OTP(self.secret, digits=digits, digest=self.digest, name=self.name, issuer=self.issuer, chargroup=self.chargroup, encoder=self.encoder)
 
         if for_time:
             if not isinstance(for_time, datetime.datetime):
@@ -137,9 +137,9 @@ class TOTP():
             rdigits=self.rdigits,
             chargroup=self.chargroup,
             digits=self.digits,
-            period=self.interval,
+            period=self.period,
             image=image,
-            impl=self.impl,
+            encoder=self.encoder,
             initial_count=initial_count,
         )
 
@@ -150,6 +150,6 @@ class TOTP():
         corresponding counter value (timecode).
         """
         if for_time.tzinfo:
-            return int(calendar.timegm(for_time.utctimetuple()) / self.interval)
+            return int(calendar.timegm(for_time.utctimetuple()) / self.period)
         else:
-            return int(time.mktime(for_time.timetuple()) / self.interval)
+            return int(time.mktime(for_time.timetuple()) / self.period)

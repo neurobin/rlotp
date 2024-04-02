@@ -16,7 +16,7 @@ def build_uri(
     digits: Optional[int] = None,
     period: Optional[int] = None,
     image: Optional[str] = None,
-    impl: Optional[str] = None,
+    encoder: Optional[str] = None,
 ) -> str:
     """
     Returns the provisioning URI for the OTP; works for either TOTP or HOTP.
@@ -68,8 +68,8 @@ def build_uri(
         url_args["rdigits"] = "-".join(map(str, rdigits))
     if chargroup:
         url_args["chargroup"] = chargroup
-    if impl:
-        url_args["impl"] = impl
+    if encoder:
+        url_args["encoder"] = encoder
     if is_digits_set:
         url_args["digits"] = digits
     if is_period_set:

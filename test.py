@@ -206,7 +206,7 @@ class TOTPExampleValuesFromTheRFC(unittest.TestCase):
         self.assertEqual(totp.provisioning_uri(), rlotp.parse_uri(totp.provisioning_uri()).provisioning_uri())
 
         key = "c7uxuqhgflpw7oruedmglbrk7u6242vb"
-        totp = rlotp.TOTP(key, digits=8, interval=60, digest=hashlib.sha256, name="baco@peperina", issuer="FooCorp")
+        totp = rlotp.TOTP(key, digits=8, period=60, digest=hashlib.sha256, name="baco@peperina", issuer="FooCorp")
         url = urlparse(totp.provisioning_uri())
         self.assertEqual(url.scheme, "otpauth")
         self.assertEqual(url.netloc, "totp")
@@ -223,7 +223,7 @@ class TOTPExampleValuesFromTheRFC(unittest.TestCase):
         )
         self.assertEqual(totp.provisioning_uri(), rlotp.parse_uri(totp.provisioning_uri()).provisioning_uri())
 
-        totp = rlotp.TOTP(key, digits=8, interval=60, name="baco@peperina", issuer="FooCorp")
+        totp = rlotp.TOTP(key, digits=8, period=60, name="baco@peperina", issuer="FooCorp")
         url = urlparse(totp.provisioning_uri())
         self.assertEqual(url.scheme, "otpauth")
         self.assertEqual(url.netloc, "totp")

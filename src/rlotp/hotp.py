@@ -20,7 +20,7 @@ class HOTP(TOTP):
         name: Optional[str] = None,
         issuer: Optional[str] = None,
         initial_count: int = 0,
-        impl: Optional[str] = None,
+        encoder: Optional[str] = None,
     ) -> None:
         """
         :param secret: secret in base32 format
@@ -31,7 +31,7 @@ class HOTP(TOTP):
         :param issuer: issuer
         """
         self.initial_count = initial_count
-        super().__init__(secret, rdigits=rdigits, chargroup=chargroup, digits=digits, digest=digest, name=name, issuer=issuer, impl=impl)
+        super().__init__(secret, rdigits=rdigits, chargroup=chargroup, digits=digits, digest=digest, name=name, issuer=issuer, encoder=encoder)
 
     def at(self, count: int) -> str:
         """
