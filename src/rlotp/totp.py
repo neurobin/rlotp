@@ -38,7 +38,7 @@ class TOTP():
         if rdigits:
             if rdigits[0] < 6 or rdigits[1] > 10:
                 raise ValueError("rdigits must be between 6 and 10")
-            self.rdigits = (rdigits[0], rdigits[1] + 1)
+            self.rdigits = rdigits
         if digest is None:
             digest = hashlib.sha1
 
@@ -67,7 +67,7 @@ class TOTP():
         :returns: OTP value
         """
         if self.rdigits:
-            ns = range(*self.rdigits)
+            ns = range(self.rdigits[0], self.rdigits[1] + 1)
             n = len(str(len(ns)))
             otp1 = OTP(self.secret, digits=n, digest=self.digest, name=self.name, issuer=self.issuer)
             digits = utils.normalize(int(otp1.generate_otp(self.timecode(for_time) + counter_offset) if for_time else counter_offset), ns)
